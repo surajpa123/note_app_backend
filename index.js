@@ -24,9 +24,9 @@ const Note = require("./models/notesSchema")
 
 const { v4: uuidv4 } = require('uuid');
 
+const verifyToken = require("./middelware/verifyToken")
+
 const uuid = uuidv4();
-
-
 
 
 app.use(express.json());
@@ -34,14 +34,12 @@ app.use(express.json());
 // model
 const User = require("./models/userSchema")
 
-
 app.get("/",(req,res)=>{
     res.send("Hello I'm suraj your lover")
 })
 
-
 app.delete("/notes/delete/:noteId",async (req,res)=>{
- 
+
   try {
 
     const {noteId} = req.params;
@@ -56,31 +54,22 @@ app.delete("/notes/delete/:noteId",async (req,res)=>{
     res.status(500).json({ message: 'Internal server error' });
 
   }
-
 }
-
-
-
 
 )
 
-app.post("/create", async (req,res)=>{
+app.post("/notes/create",verifyToken, async (req,res)=>{
 
     try {
 
-    const token = req.headers.authorization; // Assuming token is sent in the "Authorization" header
-
-     const decodeToken = jwt.verify(token, process.env.SECRET_KEY);
-
-     console.log(decodeToken.userId)
-
+    const userId =  req.username // taking the username from middleware
 
 const {title,content} = req.body;
 
 const newNote = new Note({
   title,
   content,
-  userId:decodeToken.userId
+  userId:userId
 })
 
 newNote.save()
@@ -101,7 +90,6 @@ app.get("/notes/:userId", async (req,res)=>{
     const { userId } = req.params;
     // Retrieve notes for the specified user
     const notes = await Note.find({ userId});
-
     res.json(notes);
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
@@ -118,7 +106,6 @@ app.post("/login", async (req,res)=>{
     User.findOne({username}).then((user,pass)=>{
 
         if(username == user.username){
-
             bcrypt.compare(password,user.password, (err,result)=>{
                 if(result){
                     const payLoad = {
@@ -127,8 +114,8 @@ app.post("/login", async (req,res)=>{
                     }
                     console.log(payLoad)
                 
-                const token = jwt.sign(payLoad, process.env.SECRET_KEY, {expiresIn:"1d"});
-                  res.status(201).send({token});
+                 const token = jwt.sign(payLoad, process.env.SECRET_KEY, {expiresIn:"1d"});
+                 res.status(201).send({token});
 
                 }else{
                     res.send("Password Not matched")
