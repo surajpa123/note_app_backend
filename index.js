@@ -35,7 +35,7 @@ app.use(express.json());
 const User = require("./models/userSchema")
 
 app.get("/",(req,res)=>{
-    res.send("Hello I'm suraj your lover")
+    res.send("Hello I'm suraj")
 })
 
 app.delete("/notes/delete/:noteId",async (req,res)=>{
