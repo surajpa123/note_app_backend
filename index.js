@@ -89,7 +89,10 @@ res.status(201).json({message:"Note created sucessfully",newNote})
 
 app.get("/notes",verifyToken, async (req,res)=>{
   try {
-    const { userId } = req.userId;
+    // console.log(req.username,'hsbdhbd')
+    const  userId  = req.username;
+   
+    // console.log(userId)
     // Retrieve notes for the specified user
     const notes = await Note.find({ userId});
     res.json(notes);
