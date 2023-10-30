@@ -58,6 +58,8 @@ app.delete("/notes/delete/:noteId",async (req,res)=>{
 
 )
 
+// sueygwebgr
+
 app.post("/notes/create",verifyToken, async (req,res)=>{
 
     try {
@@ -85,9 +87,9 @@ res.status(201).json({message:"Note created sucessfully",newNote})
 })
 
 
-app.get("/notes/:userId", async (req,res)=>{
+app.get("/notes",verifyToken, async (req,res)=>{
   try {
-    const { userId } = req.params;
+    const { userId } = req.userId;
     // Retrieve notes for the specified user
     const notes = await Note.find({ userId});
     res.json(notes);

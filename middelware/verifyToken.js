@@ -10,6 +10,8 @@ const verifyToken = (req,res,next)=>{
 
     try {
 
+        //hsghsg
+
         const token =  req.headers.authorization; // Assuming token is sent in the "Authorization" header
 
         const decodeToken = jwt.verify(token, process.env.SECRET_KEY);
