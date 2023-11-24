@@ -65,6 +65,24 @@ app.delete("/notes/delete/:noteId",async (req,res)=>{
 
 )
 
+app.patch('/notes/update/:noteId', async (req,res)=>{
+
+  try {
+
+    const {noteId} = req.params;
+
+    await Note.findByIdAndUpdate({_id:noteId});
+
+    res.send({message:"Note is updated sucessfully"})
+    
+  } catch (error) {
+
+    res.status(500).json({ message: 'Internal server error' });
+  }
+
+
+})
+
 // sueygwebgr
 
 app.post("/notes/create",verifyToken, async (req,res)=>{

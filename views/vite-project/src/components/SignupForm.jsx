@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Box, Button, FormControl, FormLabel, Input, Stack } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 const SignupForm = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate  = useNavigate()
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Perform signup logic here
-
-
-
+    // Perform signup logic her
     console.log('Username:', username);
     console.log('Email:', email);
     console.log('Password:', password);
@@ -25,6 +25,9 @@ const SignupForm = () => {
     axios.post("https://prickly-blue-chinchilla.cyclic.app/signup", payload).then((res)=>{
        console.log(res)
       alert(res.data)
+      if(res.data == 'User created successfully'){
+        navigate("/login")
+      }
     }).catch((err)=>{
       console.log(err)
     })
@@ -40,7 +43,7 @@ const SignupForm = () => {
   };
 
   return (
-    <Box w="300px" p={4} borderWidth={1} borderRadius="md" boxShadow="md" m = 'auto'>
+    <Box w="300px" p={4} borderWidth={1} borderRadius="md" boxShadow="md" m = '200px auto'  >
       <form onSubmit={handleSubmit}>
         <Stack spacing={3}>
           <FormControl id="username">

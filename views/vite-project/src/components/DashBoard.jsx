@@ -16,12 +16,18 @@ import {
 import NavBar from "./Navbar";
 import Notes from "./Notes";
 import axios from "axios";
+import TaskModal from './TaskModal';
+
 
 import Cookies from "js-cookie";
 
 const DashBoard = ({ isFilled }) => {
   const toast = useToast();
   const token = Cookies.get("token");
+
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
 
   const [tasks, setTasks] = useState([
     // Add more tasks as needed
@@ -72,10 +78,13 @@ const DashBoard = ({ isFilled }) => {
     console.log(taskId);
   };
 
-  const handleEdit = (taskId) => {
+  const handleEdit = (task) => {
     // Implement edit functionality based on the taskId
     // You can navigate to an edit page or show a modal for editing
-    console.log(`Edit task with ID: ${taskId}`);
+
+    setSelectedTask(task)
+    setIsModalOpen(true);
+    
   };
 
   return (
@@ -114,7 +123,7 @@ const DashBoard = ({ isFilled }) => {
                 bottom={2}
                 right={2}
                 colorScheme="teal"
-                onClick={() => handleEdit(task._id)}
+                onClick={() => handleEdit(task)}
               >
                 Edit
               </Button>
@@ -122,6 +131,10 @@ const DashBoard = ({ isFilled }) => {
           </GridItem>
         ))}
       </Grid>
+      <TaskModal isOpen={isModalOpen}
+      onClose={()=> setIsModalOpen(false)}
+      task={selectedTask}
+      />
     </Box>
   );
 };

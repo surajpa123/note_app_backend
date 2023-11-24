@@ -2,6 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import LogOutModal from "./LogOutModal";
+import UserProfile from "./UserProfile";
 import {
   ChakraProvider,
   CSSReset,
@@ -15,6 +17,15 @@ import {
   Heading,
   Avatar,
   Flex,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor
 } from "@chakra-ui/react";
 import DashBoard from "./DashBoard";
 import axios from "axios";
@@ -22,6 +33,7 @@ import axios from "axios";
 const Notes = () => {
   const token = Cookies.get("token");
   const [isFilled, setIsFIlled] = useState(false);
+  const userName  = Cookies.get("userInfo");
 
   console.log(token, "hello");
 
@@ -85,7 +97,19 @@ const Notes = () => {
     <>
       <Box display="flex" justifyContent="space-between" padding="5">
         {" "}
-        <Heading mb={4}>Create Task</Heading> <Avatar name="suraj pathak" />
+        <Heading mb={4}>Create Task</Heading> 
+
+
+
+       
+  {/* <Avatar onClick={()=>{
+    // console.log("hello")
+  }} name= {userName} /> */}
+  
+  <UserProfile/>
+        
+        
+       
       </Box>
       <Box p={4}>
         <FormControl>
@@ -111,6 +135,7 @@ const Notes = () => {
           Submit
         </Button>
       </Box>
+
 
       <DashBoard isFilled={isFilled} />
     </>

@@ -20,6 +20,8 @@ function App() {
 
 <Route path='/' element = {<Notes/>}/>
 
+
+
 <Route path='/dashboard' element = {<DashBoard/>}/>
 
 

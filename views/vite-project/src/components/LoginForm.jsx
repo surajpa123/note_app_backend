@@ -8,9 +8,11 @@ import {
   Stack,
   useToast,
   Spinner,
+  Heading,
+  Text
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useAsyncValue, useNavigate } from "react-router-dom";
+import { Link, useAsyncValue, useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import Cookies from "js-cookie";
 
@@ -70,13 +72,14 @@ const LoginForm = () => {
 
   return (
     <Box
-      w="300px"
-      p={4}
+      w="500px"
+      p={10}
       borderWidth={1}
       borderRadius="md"
       boxShadow="md"
       m="200px auto"
     >
+      <Heading mb={5}>Sticky Notes</Heading>
       <form onSubmit={handleSubmit}>
         <Stack spacing={3}>
           <FormControl id="username">
@@ -105,6 +108,7 @@ const LoginForm = () => {
           )}
         </Stack>
       </form>
+      <Text mt={5}>If you don't have an account please click <Link to={"/signup"}>Sign Up</Link> </Text>
     </Box>
   );
 };
