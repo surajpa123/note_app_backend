@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import {
   ChakraProvider,
   CSSReset,
@@ -12,75 +12,62 @@ import {
   Grid,
   useToast,
   GridItem,
-} from '@chakra-ui/react';
-import NavBar from './Navbar';
-import Notes from './Notes';
-import axios from 'axios';
+} from "@chakra-ui/react";
+import NavBar from "./Navbar";
+import Notes from "./Notes";
+import axios from "axios";
 
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
-
-
-
-const DashBoard = ({isFilled}) => {
-
-
-    const toast = useToast()
- const token = Cookies.get("token");
+const DashBoard = ({ isFilled }) => {
+  const toast = useToast();
+  const token = Cookies.get("token");
 
   const [tasks, setTasks] = useState([
     // Add more tasks as needed
   ]);
 
+  const getData = () => {
+    axios
+      .get("https://prickly-blue-chinchilla.cyclic.app/notes", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        setTasks(res.data);
+      });
+  };
 
+  useEffect(() => {
+    getData();
+  }, [isFilled]);
 
-
-  const getData = ()=>{
-    axios.get('https://prickly-blue-chinchilla.cyclic.app/notes',{
-        headers:{
-            "Authorization": token
-        }
-    }).then((res)=>{
-        setTasks(res.data)
-
-    })
-  }
-
-  
-
-  useEffect(()=>{
-    getData()
-  },[isFilled])
-
-  console.log(tasks,'checkinfnfjnf')
-
-
+  console.log(tasks, "checkinfnfjnf");
 
   const handleDelete = (taskId) => {
     // Implement delete functionality based on the taskId
     // Update the tasks state after deletion
-    const updatedTasks = tasks.filter((task) => task.id !== taskId);
     // setTasks(updatedTasks);
 
-    axios.delete(`https://prickly-blue-chinchilla.cyclic.app/notes/delete/${taskId}`).then((res)=>{
+    axios
+      .delete(
+        `https://prickly-blue-chinchilla.cyclic.app/notes/delete/${taskId}`
+      )
+      .then((res) => {
+        const { message } = res.data;
+        getData();
 
-
-    const {message} = res.data;
-    getData()
-
-    toast({
-        title: message,
-        description: "Task has been successfully deleted!",
-        status: "warning",
-        duration: 2000,
-        isClosable: true,
+        toast({
+          title: message,
+          description: "Task has been successfully deleted!",
+          status: "warning",
+          duration: 2000,
+          isClosable: true,
+        });
       });
 
-     
-
-    })
-
-    console.log(taskId)
+    console.log(taskId);
   };
 
   const handleEdit = (taskId) => {
@@ -138,4 +125,3 @@ const DashBoard = ({isFilled}) => {
 };
 
 export default DashBoard;
-

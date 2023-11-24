@@ -32,7 +32,10 @@ const Notes = () => {
   const toast = useToast();
 
   useEffect(() => {
-    if (Auth.authenticated == false) {
+    if(token != undefined){
+      Auth.login();
+    }
+    else if (Auth.authenticated == false) {
       alert("Please Login");
       navigate("/login");
     }

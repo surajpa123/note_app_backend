@@ -2,6 +2,8 @@ const express = require("express")
 
 const bodyparser = require("body-parser")
 
+const cors = require("cors")
+
 const env  = require("dotenv");
 
 const bcrypt = require("bcrypt");
@@ -30,6 +32,11 @@ const uuid = uuidv4();
 
 
 app.use(express.json());
+
+app.use(cors({
+  allowedHeaders:["Content-type" , 'Authorization']
+}))
+
 
 // model
 const User = require("./models/userSchema")
