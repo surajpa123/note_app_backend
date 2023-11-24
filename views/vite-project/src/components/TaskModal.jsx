@@ -34,7 +34,15 @@ const TaskModal = ({ isOpen, onClose, onSave, task }) => {
 
 console.log(editedTask,'edited')
 
-axios.post("https://prickly-blue-chinchilla.cyclic.app/notes//")
+const payload = {
+    title:editedTask.title,
+    content:editedTask.content
+}
+
+console.log(payload)
+axios.patch(`https://prickly-blue-chinchilla.cyclic.app/notes/update/${editedTask._id}`, payload).then((res)=>{
+    console.log(res)
+})
 
     onClose(); // Close the modal
   };

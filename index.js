@@ -70,8 +70,9 @@ app.patch('/notes/update/:noteId', async (req,res)=>{
   try {
 
     const {noteId} = req.params;
+    const {title,content} = req.body
 
-    await Note.findByIdAndUpdate({_id:noteId});
+    await Note.findByIdAndUpdate({_id:noteId}, {title, content});
 
     res.send({message:"Note is updated sucessfully"})
     
