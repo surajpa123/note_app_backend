@@ -13,13 +13,15 @@ import {
   Button,
   useToast,
   Heading,
+  Avatar,
+  Flex,
 } from "@chakra-ui/react";
 import DashBoard from "./DashBoard";
 import axios from "axios";
 
 const Notes = () => {
   const token = Cookies.get("token");
-  const [isFilled, setIsFIlled] = useState(false)
+  const [isFilled, setIsFIlled] = useState(false);
 
   console.log(token, "hello");
 
@@ -32,11 +34,9 @@ const Notes = () => {
   const toast = useToast();
 
   useEffect(() => {
-    if(token != undefined){
+    if (token != undefined) {
       Auth.login();
-    }
-    else if (Auth.authenticated == false) {
-      alert("Please Login");
+    } else if (Auth.authenticated == false) {
       navigate("/login");
     }
   });
@@ -64,10 +64,10 @@ const Notes = () => {
       )
       .then((res) => {
         const { message } = res.data;
-        setTimeout(()=>{
-            setIsFIlled(false)
-        },2000)
-        setIsFIlled(true)
+        setTimeout(() => {
+          setIsFIlled(false);
+        }, 2000);
+        setIsFIlled(true);
         toast({
           title: message,
           description: "Task has been successfully created!",
@@ -75,16 +75,19 @@ const Notes = () => {
           duration: 3000,
           isClosable: true,
         });
-      }).catch((error) => {
+      })
+      .catch((error) => {
         console.error(error);
-      });;
+      });
   };
 
   return (
     <>
+      <Box display="flex" justifyContent="space-between" padding="5">
+        {" "}
+        <Heading mb={4}>Create Task</Heading> <Avatar name="suraj pathak" />
+      </Box>
       <Box p={4}>
-        <Heading mb={4}>Create Task</Heading>
-
         <FormControl>
           <FormLabel>Task Name</FormLabel>
           <Input
@@ -109,7 +112,7 @@ const Notes = () => {
         </Button>
       </Box>
 
-      <DashBoard  isFilled = {isFilled} />
+      <DashBoard isFilled={isFilled} />
     </>
   );
 };

@@ -7,7 +7,7 @@ import {
   Input,
   Stack,
   useToast,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useAsyncValue, useNavigate } from "react-router-dom";
@@ -29,6 +29,8 @@ const LoginForm = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setLoading(true);
+
     // Perform login logic here
     // console.log('Username:', username);
     // console.log('Password:', password);
@@ -40,20 +42,14 @@ const LoginForm = () => {
     axios
       .post("https://prickly-blue-chinchilla.cyclic.app/login", payload)
       .then((res) => {
-        // alert(res.data)
-
-        setLoading(true);
         const { message } = res.data;
         if (res.data.token) {
           Auth.login();
+          console.log(res.data)
+          Cookies.set("userInfo", res.data.username)
+          // Cookies.set("userInfo")
           Cookies.set("token", res.data.token, { expires: 7 });
         }
-
-        // toast.promise(res, {
-        //   success: { title: 'Promise resolved', description: 'Looks great' },
-        //   error: { title: 'Promise rejected', description: 'Something wrong' },
-        //   loading: { title: 'Promise pending', description: 'Please wait' },
-        // })
       })
       .catch((err) => {
         console.log(err);
@@ -67,6 +63,7 @@ const LoginForm = () => {
 
   if (Auth.authenticated == true) {
     navigate("/");
+    setLoading(false);
   }
 
   console.log(loading, "load");
@@ -99,12 +96,13 @@ const LoginForm = () => {
             />
           </FormControl>
 
-          {
-            loading ? <Spinner/> :   <Button colorScheme="blue" type="submit">
-            Login
-          </Button>
-          }
-        
+          {loading ? (
+            <Spinner marginLeft={"45%"} />
+          ) : (
+            <Button colorScheme="blue" type="submit">
+              Login
+            </Button>
+          )}
         </Stack>
       </form>
     </Box>

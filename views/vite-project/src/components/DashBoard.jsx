@@ -28,6 +28,8 @@ const DashBoard = ({ isFilled }) => {
   ]);
 
   const getData = () => {
+
+    console.log('getting data')
     axios
       .get("https://prickly-blue-chinchilla.cyclic.app/notes", {
         headers: {
@@ -43,7 +45,7 @@ const DashBoard = ({ isFilled }) => {
     getData();
   }, [isFilled]);
 
-  console.log(tasks, "checkinfnfjnf");
+  console.log(tasks, "dashboard page");
 
   const handleDelete = (taskId) => {
     // Implement delete functionality based on the taskId

@@ -127,7 +127,7 @@ app.post("/login", async (req,res)=>{
                     console.log(payLoad)
                 
                  const token = jwt.sign(payLoad, process.env.SECRET_KEY, {expiresIn:"1d"});
-                 res.status(201).send({token});
+                 res.status(201).send({token,username});
 
                 }else{
                     res.send("Password Not matched")
