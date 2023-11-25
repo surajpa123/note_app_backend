@@ -12,6 +12,10 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
       setAuthenticated(false);
     };
+
+    const fetchData = ()=>{
+      
+    }
   
     return (
       <AuthContext.Provider value={{ authenticated, login, logout }}>
