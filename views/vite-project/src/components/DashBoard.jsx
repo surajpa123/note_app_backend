@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import {
-  ChakraProvider,
-  CSSReset,
   Box,
   Flex,
   Text,
@@ -13,8 +11,6 @@ import {
   useToast,
   GridItem,
 } from "@chakra-ui/react";
-import NavBar from "./Navbar";
-import Notes from "./Notes";
 import axios from "axios";
 import TaskModal from './TaskModal';
 
