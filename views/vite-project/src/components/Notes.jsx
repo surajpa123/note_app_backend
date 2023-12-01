@@ -97,7 +97,7 @@ const Notes = () => {
     <>
       <Box display="flex" justifyContent="space-between" padding="5">
         {" "}
-        <Heading mb={4}>Create Task</Heading> 
+        <Heading mb={4}>Create Notes</Heading> 
 
 
 
@@ -113,7 +113,7 @@ const Notes = () => {
       </Box>
       <Box p={4}>
         <FormControl>
-          <FormLabel>Task Name</FormLabel>
+          <FormLabel>Notes Name</FormLabel>
           <Input
             type="text"
             placeholder="Enter task name"

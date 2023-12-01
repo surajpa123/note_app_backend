@@ -89,7 +89,7 @@ const DashBoard = ({ isFilled }) => {
 
   return (
     <Box p={4}>
-      <Heading mb={4}>Task Dashboard</Heading>
+      <Heading mb={4}>Notes Dashboard</Heading>
 
       <Grid templateColumns="repeat(4, 1fr)" gap={4}>
         {tasks.map((task) => (
