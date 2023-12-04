@@ -87,7 +87,7 @@ const DashBoard = ({ isFilled }) => {
     <Box p={4}>
       <Heading mb={4}>Notes Dashboard</Heading>
 
-      <Grid templateColumns="repeat(4, 1fr)" gap={4}>
+      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }} gap={4}>
         {tasks.map((task) => (
           <GridItem key={task.id}>
             <Box
@@ -100,9 +100,7 @@ const DashBoard = ({ isFilled }) => {
             >
               <Text fontWeight="bold">{task.title}</Text>
               <Text>{task.content}</Text>
-              {/* <Text>{`Created Date: ${task.createdDate}`}</Text> */}
-
-              {/* Delete Button */}
+             
               <Button
                 position="absolute"
                 bottom={2}

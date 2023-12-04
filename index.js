@@ -14,10 +14,6 @@ const mongoose  = require("mongoose")
 
 const auth = require("./middelware/auth")
 
-const port  = process.env.PORT
-
-const database  = process.env.DATABASE_URL
-
 const app = express();
 
 const jwt  = require("jsonwebtoken")
