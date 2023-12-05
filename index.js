@@ -1,200 +1,177 @@
-const express = require("express")
+const express = require("express");
 
-const bodyparser = require("body-parser")
+const bodyparser = require("body-parser");
 
-const cors = require("cors")
+const cors = require("cors");
 
-const env  = require("dotenv");
+const env = require("dotenv");
+
+env.config();
 
 const bcrypt = require("bcrypt");
 
-env.config()
+const mongoose = require("mongoose");
 
-const mongoose  = require("mongoose")
-
-const auth = require("./middelware/auth")
+const auth = require("./middelware/auth");
 
 const app = express();
 
-const jwt  = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
-const Note = require("./models/notesSchema")
+const Note = require("./models/notesSchema");
 
-const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require("uuid");
 
-const verifyToken = require("./middelware/verifyToken")
+const verifyToken = require("./middelware/verifyToken");
 
 const uuid = uuidv4();
 
+const port = process.env.PORT || 3000;
+
+const database = process.env.DATABASE_URL;
 
 app.use(express.json());
 
-app.use(cors({
-  allowedHeaders:["Content-type" , 'Authorization']
-}))
-
+app.use(
+  cors({
+    allowedHeaders: ["Content-type", "Authorization"],
+  })
+);
 
 // model
-const User = require("./models/userSchema")
+const User = require("./models/userSchema");
 
-app.get("/",(req,res)=>{
-    res.send("Hello I'm suraj")
-})
+app.get("/", (req, res) => {
+  res.send("Hello I'm suraj");
+});
 
-app.delete("/notes/delete/:noteId",async (req,res)=>{
-
+app.delete("/notes/delete/:noteId", async (req, res) => {
   try {
+    const { noteId } = req.params;
 
-    const {noteId} = req.params;
-    
-    await Note.findByIdAndDelete({_id:noteId})
+    await Note.findByIdAndDelete({ _id: noteId });
 
-    res.send({message:"Note deleted sucessfully"})
-    
+    res.send({ message: "Note deleted sucessfully" });
   } catch (error) {
-
-    console.log(error)
-    res.status(500).json({ message: 'Internal server error' });
-
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
   }
-}
+});
 
-)
-
-app.patch('/notes/update/:noteId', async (req,res)=>{
-
+app.patch("/notes/update/:noteId", async (req, res) => {
   try {
+    const { noteId } = req.params;
+    const { title, content } = req.body;
 
-    const {noteId} = req.params;
-    const {title,content} = req.body
+    await Note.findByIdAndUpdate({ _id: noteId }, { title, content });
 
-    await Note.findByIdAndUpdate({_id:noteId}, {title, content});
-
-    res.send({message:"Note is updated sucessfully"})
-    
+    res.send({ message: "Note is updated sucessfully" });
   } catch (error) {
-
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
-
-
-})
+});
 
 // sueygwebgr
 
-app.post("/notes/create",verifyToken, async (req,res)=>{
+app.post("/notes/create", verifyToken, async (req, res) => {
+  try {
+    const userId = req.username; // taking the username from middleware
 
-    try {
+    const { title, content } = req.body;
 
-    const userId =  req.username // taking the username from middleware
+    const newNote = new Note({
+      title,
+      content,
+      userId: userId,
+    });
 
-const {title,content} = req.body;
+    newNote.save();
 
-const newNote = new Note({
-  title,
-  content,
-  userId:userId
-})
+    res.status(201).json({ message: "Note created sucessfully", newNote });
+  } catch (error) {
+    console.log(error);
+    res.json({ message: "Not authenticated" });
+  }
+});
 
-newNote.save()
-
-res.status(201).json({message:"Note created sucessfully",newNote})
-
-    } catch (error) {
-        console.log(error)
-        res.json({message:"Not authenticated"})
-
-    }
-
-})
-
-
-app.get("/notes",verifyToken, async (req,res)=>{
+app.get("/notes", verifyToken, async (req, res) => {
   try {
     // console.log(req.username,'hsbdhbd')
-    const userId  = req.username;
-   
+    const userId = req.username;
+
     // console.log(userId)
     // Retrieve notes for the specified user
-    const notes = await Note.find({ userId});
+    const notes = await Note.find({ userId });
     res.json(notes);
   } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
-})
+});
 
+app.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-app.post("/login", async (req,res)=>{
+    User.findOne({ username }).then((user, pass) => {
+      if (username == user.username) {
+        bcrypt.compare(password, user.password, (err, result) => {
+          if (result) {
+            const payLoad = {
+              userId: user._id,
+              username: user.username,
+            };
+            console.log(payLoad);
 
-    try {
-        
-    const {username,password} = req.body;
-        
-    User.findOne({username}).then((user,pass)=>{
+            const token = jwt.sign(payLoad, process.env.SECRET_KEY, {
+              expiresIn: "1d",
+            });
+            res.status(201).send({ token, username });
+          } else {
+            res.send("Password Not matched");
+          }
+        });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error logging in user");
+  }
+});
 
-        if(username == user.username){
-            bcrypt.compare(password,user.password, (err,result)=>{
-                if(result){
-                    const payLoad = {
-                        userId:user._id,
-                        username:user.username
-                    }
-                    console.log(payLoad)
-                
-                 const token = jwt.sign(payLoad, process.env.SECRET_KEY, {expiresIn:"1d"});
-                 res.status(201).send({token,username});
+app.post("/signup", auth, async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-                }else{
-                    res.send("Password Not matched")
-                }
-            })
-        }
-    })
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error logging in user');
-    } 
-
-
-})
-
-app.post('/signup',auth, async (req, res) => {
-    try {
-      const { username, password } = req.body
-
-      // to make password secure for everyone
+    // to make password secure for everyone
     let saltRound = 5;
 
-    bcrypt.genSalt(saltRound, (err,salt)=>{
-        bcrypt.hash(password,salt, (err,hash)=>{
-            const newData = new User({
-                username:username,
-                password:hash
-               });
-               newData.save()
-        })
-      })
+    bcrypt.genSalt(saltRound, (err, salt) => {
+      bcrypt.hash(password, salt, (err, hash) => {
+        const newData = new User({
+          username: username,
+          password: hash,
+        });
+        newData.save();
+      });
+    });
 
-      res.status(201).send('User created successfully');
+    res.status(201).send("User created successfully");
+  } catch (error) {
+    console.error("Error signing up user:", error);
+    res.status(500).send("Error signing up user");
+  }
+});
 
-    } catch (error) {
-      console.error('Error signing up user:', error);
-      res.status(500).send('Error signing up user');
-    }
-  });
-  
+app.listen(port, () => {
+  console.log(`Server Started ${port}`);
+});
 
-app.listen(port,()=>{
-    console.log(`Server Started ${port}`)
-})
-
-
-mongoose.connect(database)
+mongoose
+  .connect(database)
   .then(() => {
-    console.log('Connected to MongoDB successfully');
+    console.log("Connected to MongoDB successfully");
     // Further code to interact with the MongoDB database can be placed here
   })
   .catch((error) => {
-    console.error('Failed to connect to MongoDB:', error);
+    console.error("Failed to connect to MongoDB:", error);
   });
