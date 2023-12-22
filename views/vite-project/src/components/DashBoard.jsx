@@ -10,42 +10,47 @@ import {
   Grid,
   useToast,
   GridItem,
+  Spinner,
 } from "@chakra-ui/react";
 import axios from "axios";
-import TaskModal from './TaskModal';
+import TaskModal from "./TaskModal";
 
+import { useAuth } from "./AuthContext";
 
 import Cookies from "js-cookie";
 
 const DashBoard = ({ isFilled }) => {
   const toast = useToast();
-  const token = Cookies.get("token");
-
+  const { tasks, getData } = useAuth();
   const [selectedTask, setSelectedTask] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // const [tasks, setTasks] = useState([
+  //   // Add more tasks as needed
+  // ]);
 
-  const [tasks, setTasks] = useState([
-    // Add more tasks as needed
-  ]);
+  // const getData = () => {
+  //   //   const [tasks,setTasks] = useState([])
+  //     console.log('getting data');
+  //     axios
+  //       .get("https://prickly-blue-chinchilla.cyclic.app/notes", {
+  //         headers: {
+  //           Authorization: token,
+  //         },
+  //       })
+  //       .then((res) => {
+  //         setTasks(res.data);
+  //         console.log("Called the get",  res.data)
 
-  const getData = () => {
-
-    console.log('getting data')
-    axios
-      .get("https://prickly-blue-chinchilla.cyclic.app/notes", {
-        headers: {
-          Authorization: token,
-        },
-      })
-      .then((res) => {
-        setTasks(res.data);
-      });
-  };
+  //       })
+  //       .catch((error) => {
+  //         console.error("Error fetching data:", error);
+  //       });
+  //   };
 
   useEffect(() => {
     getData();
-  }, [isFilled]);
+  }, []);
 
   console.log(tasks, "dashboard page");
 
@@ -61,7 +66,6 @@ const DashBoard = ({ isFilled }) => {
       .then((res) => {
         const { message } = res.data;
         getData();
-
         toast({
           title: message,
           description: "Task has been successfully deleted!",
@@ -78,16 +82,22 @@ const DashBoard = ({ isFilled }) => {
     // Implement edit functionality based on the taskId
     // You can navigate to an edit page or show a modal for editing
 
-    setSelectedTask(task)
+    setSelectedTask(task);
     setIsModalOpen(true);
-    
   };
 
   return (
     <Box p={4}>
       <Heading mb={4}>Notes Dashboard</Heading>
 
-      <Grid templateColumns={{ base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(4, 1fr)" }} gap={4}>
+      <Grid
+        templateColumns={{
+          base: "1fr",
+          md: "repeat(2, 1fr)",
+          lg: "repeat(4, 1fr)",
+        }}
+        gap={4}
+      >
         {tasks.map((task) => (
           <GridItem key={task.id}>
             <Box
@@ -100,7 +110,7 @@ const DashBoard = ({ isFilled }) => {
             >
               <Text fontWeight="bold">{task.title}</Text>
               <Text>{task.content}</Text>
-             
+
               <Button
                 position="absolute"
                 bottom={2}
@@ -125,9 +135,10 @@ const DashBoard = ({ isFilled }) => {
           </GridItem>
         ))}
       </Grid>
-      <TaskModal isOpen={isModalOpen}
-      onClose={()=> setIsModalOpen(false)}
-      task={selectedTask}
+      <TaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        task={selectedTask}
       />
     </Box>
   );

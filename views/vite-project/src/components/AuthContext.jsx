@@ -1,29 +1,58 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
-    const [authenticated, setAuthenticated] = useState(false);
-  
-    const login = () => {
-      setAuthenticated(true);
-    };
-  
-    const logout = () => {
-      setAuthenticated(false);
-    };
+import Cookies from "js-cookie";
 
-    const fetchData = ()=>{
-      
-    }
-  
-    return (
-      <AuthContext.Provider value={{ authenticated, login, logout }}>
-        {children}
-      </AuthContext.Provider>
-    );
+import axios from "axios";
+
+export const AuthProvider = ({ children }) => {
+  const [authenticated, setAuthenticated] = useState(false);
+
+  const token = Cookies.get("token");
+
+  const [tasks, setTasks] = useState([
+    // Add more tasks as needed
+  ]);
+
+  const login = () => {
+    setAuthenticated(true);
   };
-  
-  export const useAuth = () => {
-    return useContext(AuthContext);
+
+  useEffect(() => {
+    getData();
+  }, []);
+  const logout = () => {
+    setAuthenticated(false);
   };
+
+  const getData = () => {
+    //   const [tasks,setTasks] = useState([])
+    console.log("getting data");
+    axios
+      .get("https://prickly-blue-chinchilla.cyclic.app/notes", {
+        headers: {
+          Authorization: token,
+        },
+      })
+      .then((res) => {
+        setTasks(res.data);
+        console.log("Called the get", res.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{ authenticated, login, logout, getData, tasks }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
