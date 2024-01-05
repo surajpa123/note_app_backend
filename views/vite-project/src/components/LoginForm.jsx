@@ -79,7 +79,7 @@ const LoginForm = () => {
       boxShadow="md"
       m="200px auto"
     >
-      <Heading mb={5}>Sticky Notes</Heading>
+      <Heading  mb={5}>Sticky Notes</Heading>
       <form onSubmit={handleSubmit}>
         <Stack spacing={3}>
           <FormControl id="username">

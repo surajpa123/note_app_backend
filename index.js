@@ -1,5 +1,7 @@
 const express = require("express");
 
+// http sever 3000 1000
+
 const bodyparser = require("body-parser");
 
 const cors = require("cors");
@@ -42,7 +44,7 @@ app.use(
 const User = require("./models/userSchema");
 
 app.get("/", (req, res) => {
-  res.send("Hello I'm suraj");
+  res.json({msg:"Hey Suraj welcome to note app"});
 });
 
 app.delete("/notes/delete/:noteId", async (req, res) => {
